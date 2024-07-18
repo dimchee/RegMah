@@ -65,4 +65,8 @@ passTest =
             (\_ ->
                 passAllExpect 0 "sub 3 1 1"
             )
+        , test "zadatak 2"
+            (\_ ->
+                passAllExpect 1 "sub 1 1 2\nsub 2 3 4\nadd 1 2"
+            )
         ]
