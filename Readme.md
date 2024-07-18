@@ -1,5 +1,6 @@
 # RegMah
 
+
 - jedna linija = jedna instrukcija
 - Postoje 2 instrukcije 
     - add <register> <instruction>
