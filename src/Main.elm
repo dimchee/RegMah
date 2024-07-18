@@ -9,6 +9,7 @@ import Element.Events
 import Element.Font
 import Element.Input
 import Eval
+import Html.Attributes
 import Lang
 import MiniRte as Rte
 import MiniRte.Types as RteTypes
@@ -80,7 +81,7 @@ main =
             \model ->
                 Sub.batch
                     [ Sub.map Editor <| Rte.subscriptions model.rte
-                    , Sub.map Editor <| fromBrowserClipboard RteTypes.FromBrowserClipboard
+                    , Sub.map Editor <| fromBrowserClipboard (String.replace "\u{000D}" "\n" >> RteTypes.FromBrowserClipboard)
                     ]
         }
 
@@ -102,9 +103,11 @@ update msg model =
             ( m2, Cmd.map Editor cmd )
 
         ChangeInitialRegs n ->
-            ( { model
-                | initialRegs = Eval.extendRegisters model.initialRegs n
-              }
+            ( update EvalProgram
+                { model
+                    | initialRegs = Eval.extendRegisters model.initialRegs n
+                }
+                |> Tuple.first
             , Cmd.none
             )
 
@@ -234,7 +237,7 @@ view model =
                 }
 
         viewTextArea =
-            Rte.textarea model.rte []
+            Rte.textarea model.rte [ Html.Attributes.style "text-wrap" "no-wrap" ]
                 |> Element.html
                 |> Element.map Editor
                 |> Element.el
