@@ -36,8 +36,10 @@ jobs:
         uses: actions/setup-node@v3
       - name: Install elm
         run: npm install -g elm@0.19.1
+      - name: Make elm-stuff directory
+        run: mkdir elm-stuff
       - name: Make Elm page
-        run: elm make src/Main.elm
+        run: elm make src/Main.elm --output elm-stuff/main.js
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
