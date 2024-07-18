@@ -24,7 +24,7 @@ isti regs1 regs2 =
 
 pass : Lang.Program -> TestCase -> Bool
 pass program { input, output } =
-    Eval.eval input program |> isti output
+    Eval.eval (Array.map Just input) program |> isti output
 
 
 passAll : Int -> Lang.Program -> Bool

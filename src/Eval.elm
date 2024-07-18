@@ -18,17 +18,17 @@ type alias Registers =
     Array Int
 
 
-setRegister : Int -> Int -> Registers -> Registers
+setRegister : Int -> a -> Array a -> Array a
 setRegister i x =
     Array.set (i - 1) x
 
 
-getRegister : Int -> Registers -> Maybe Int
+getRegister : Int -> Array a -> Maybe a
 getRegister i x =
     Array.get (i - 1) x
 
 
-toIndexedRegisterList : Registers -> List ( Int, Int )
+toIndexedRegisterList : Array a -> List ( Int, a )
 toIndexedRegisterList =
     Array.toIndexedList >> List.map (Tuple.mapFirst ((+) 1))
 
@@ -58,16 +58,16 @@ evalLine pc regs program =
             Finished regs
 
 
-extendRegisters : Registers -> Int -> Registers
+extendRegisters : Array (Maybe Int) -> Int -> Array (Maybe Int)
 extendRegisters regs n =
     if n > Array.length regs then
-        Array.append regs <| Array.repeat (n - Array.length regs) 0
+        Array.append regs <| Array.repeat (n - Array.length regs) Nothing
 
     else
         Array.slice 0 n regs
 
 
-eval : Registers -> Program -> Registers
+eval : Array.Array (Maybe Int) -> Program -> Registers
 eval initRegs program =
     let
         go nr line oldRegs =
@@ -97,4 +97,5 @@ eval initRegs program =
          else
             0
         )
+        |> Array.map (Maybe.withDefault 0)
         |> go 1 1

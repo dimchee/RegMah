@@ -33,7 +33,7 @@ type Page
 type Msg
     = Editor RteTypes.Msg
     | ChangeInitialRegs Int
-    | ChangeRegister Int Int
+    | ChangeRegister Int (Maybe Int)
     | Freeze
     | UnFreeze
     | ChangePage Page
@@ -44,7 +44,7 @@ type Msg
 
 type alias Model =
     { rte : Rte.Rte
-    , initialRegs : Eval.Registers
+    , initialRegs : Array.Array (Maybe Int)
     , program : Maybe Lang.Program
     , errors : Maybe (List Parser.DeadEnd)
     , result : Maybe Eval.Registers
@@ -59,7 +59,7 @@ main =
         { init =
             \() ->
                 ( { rte = Rte.init "editor"
-                  , initialRegs = Array.fromList [ 1, 2 ]
+                  , initialRegs = Array.fromList [ Just 1, Just 2 ]
                   , page = Home
                   , program = Nothing
                   , errors = Nothing
@@ -105,7 +105,8 @@ update msg model =
         ChangeInitialRegs n ->
             ( update EvalProgram
                 { model
-                    | initialRegs = Eval.extendRegisters model.initialRegs n
+                    | initialRegs =
+                        Eval.extendRegisters model.initialRegs n
                 }
                 |> Tuple.first
             , Cmd.none
@@ -309,9 +310,9 @@ view model =
             String.fromInt var ++ " = " ++ String.fromInt val |> Element.text
 
         intOr0 =
-            Parser.oneOf [ int, Parser.map (\_ -> 0) Parser.end ]
+            Parser.oneOf [ Parser.map Just int, Parser.map (\_ -> Nothing) Parser.end ]
 
-        viewAssigmentChangable ( var, val ) =
+        viewAssigmentChangable ( var, mval ) =
             Element.row []
                 [ String.fromInt var ++ " = " |> Element.text
                 , Element.Input.text [ Element.Events.onFocus Freeze ]
@@ -323,7 +324,7 @@ view model =
 
                                 _ ->
                                     NoOp
-                    , text = String.fromInt val
+                    , text = Maybe.map String.fromInt mval |> Maybe.withDefault ""
                     , placeholder = Nothing
                     , label = Element.Input.labelHidden "Value of Register"
                     }
