@@ -1,4 +1,4 @@
-module Eval exposing (eval, recursionLimit)
+module Eval exposing (Registers, eval, extendRegisters, getRegister, recursionLimit, setRegister, toIndexedRegisterList)
 
 import Array exposing (Array)
 import Lang exposing (Instruction(..), Line, Program)
@@ -10,34 +10,65 @@ recursionLimit =
 
 
 type Progress
-    = Running (Array Int) Line
-    | Finished (Array Int)
+    = Running Registers Line
+    | Finished Registers
 
 
-evalLine : Line -> Array Int -> Program -> Progress
+type alias Registers =
+    Array Int
+
+
+setRegister : Int -> Int -> Registers -> Registers
+setRegister i x =
+    Array.set (i - 1) x
+
+
+getRegister : Int -> Registers -> Maybe Int
+getRegister i x =
+    Array.get (i - 1) x
+
+
+toIndexedRegisterList : Registers -> List ( Int, Int )
+toIndexedRegisterList =
+    Array.toIndexedList >> List.map (Tuple.mapFirst ((+) 1))
+
+
+evalLine : Line -> Registers -> Program -> Progress
 evalLine pc regs program =
     let
-        modify i f =
-            Array.set i (Array.get i regs |> Maybe.withDefault 0 |> f) regs
-
-        next_branch i next_if next_else =
-            Array.get i regs
-                |> Maybe.map (always next_if)
-                |> Maybe.withDefault next_else
+        modify reg f =
+            setRegister reg (getRegister reg regs |> Maybe.withDefault 0 |> f) regs
     in
-    case Array.get pc program of
+    case Array.get (pc - 1) program of
         Just (Add { register, next }) ->
             Running (modify register ((+) 1)) next
 
         Just (Sub { register, next_if, next_else }) ->
-            Running (modify register ((-) 1)) <| next_branch register next_if next_else
+            case getRegister register regs of
+                Nothing ->
+                    Running regs next_else
+
+                Just 0 ->
+                    Running regs next_else
+
+                _ ->
+                    Running (modify register (\x -> x - 1)) next_if
 
         Nothing ->
             Finished regs
 
 
-eval : Program -> Array Int
-eval program =
+extendRegisters : Registers -> Int -> Registers
+extendRegisters regs n =
+    if n > Array.length regs then
+        Array.append regs <| Array.repeat (n - Array.length regs) 0
+
+    else
+        Array.slice 0 n regs
+
+
+eval : Registers -> Program -> Registers
+eval initRegs program =
     let
         go nr line oldRegs =
             case evalLine line oldRegs program of
@@ -51,14 +82,19 @@ eval program =
 
                 Finished regs ->
                     regs
+
+        maxReg =
+            program
+                |> Array.toList
+                |> List.map Lang.getRegister
+                |> List.maximum
+                |> Maybe.withDefault 0
     in
-    Array.repeat
-        (program
-            |> Array.toList
-            |> List.map Lang.getRegister
-            |> List.maximum
-            |> Maybe.withDefault 0
-            |> (+) 1
+    extendRegisters initRegs
+        (if maxReg < 1000 then
+            maxReg
+
+         else
+            0
         )
-        0
-        |> go 1 0
+        |> go 1 1
