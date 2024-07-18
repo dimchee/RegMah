@@ -103,4 +103,4 @@ program =
 
 parse : String -> Result (List Parser.DeadEnd) Program
 parse =
-    Parser.run program
+    Parser.run program << String.trimLeft
