@@ -6,7 +6,7 @@ import Lang exposing (Instruction(..), Line, Program)
 
 recursionLimit : number
 recursionLimit =
-    50000
+    5000
 
 
 type Progress
