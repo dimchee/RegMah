@@ -142,41 +142,41 @@ zadaci =
                   }
                 ]
           }
-        , { text = "sabrati brojeve u registrima 1 i 2 i rezultat upisati u registar 3"
+        , { text = "sabrati brojeve u registrima 2 i 3 i rezultat upisati u registar 1"
           , testCases =
-                [ { input = Array.fromList [ 12, 15, 0 ]
-                  , output = Array.fromList [ 12, 15, 27 ]
+                [ { input = Array.fromList [ 0, 12, 15 ]
+                  , output = Array.fromList [ 27 ]
                   }
-                , { input = Array.fromList [ 23, 54, 0 ]
-                  , output = Array.fromList [ 23, 54, 77 ]
+                , { input = Array.fromList [ 0, 23, 54 ]
+                  , output = Array.fromList [ 77 ]
                   }
-                , { input = Array.fromList [ 163, 312, 0 ]
-                  , output = Array.fromList [ 163, 312, 475 ]
+                , { input = Array.fromList [ 0, 18, 30 ]
+                  , output = Array.fromList [ 48 ]
                   }
-                , { input = Array.fromList [ 427, 315, 0 ]
-                  , output = Array.fromList [ 427, 315, 742 ]
+                , { input = Array.fromList [ 0, 13, 15 ]
+                  , output = Array.fromList [ 28 ]
                   }
-                , { input = Array.fromList [ 333, 642, 0 ]
-                  , output = Array.fromList [ 333, 642, 975 ]
+                , { input = Array.fromList [ 0, 3, 6 ]
+                  , output = Array.fromList [ 9 ]
                   }
                 ]
           }
-        , { text = "pomnožiti brojeve u registrima 1 i 2 i rezultat upisati u registar 3"
+        , { text = "pomnožiti brojeve u registrima 2 i 3 i rezultat upisati u registar 1"
           , testCases =
-                [ { input = Array.fromList [ 12, 15, 0 ]
-                  , output = Array.fromList [ 12, 15, 180 ]
+                [ { input = Array.fromList [ 0, 12, 15 ]
+                  , output = Array.fromList [ 180 ]
                   }
-                , { input = Array.fromList [ 23, 26, 0 ]
-                  , output = Array.fromList [ 23, 26, 598 ]
+                , { input = Array.fromList [ 0, 23, 26 ]
+                  , output = Array.fromList [ 598 ]
                   }
-                , { input = Array.fromList [ 63, 12, 0 ]
-                  , output = Array.fromList [ 63, 12, 756 ]
+                , { input = Array.fromList [ 0, 63, 12 ]
+                  , output = Array.fromList [ 756 ]
                   }
-                , { input = Array.fromList [ 27, 15, 0 ]
-                  , output = Array.fromList [ 15, 27, 405 ]
+                , { input = Array.fromList [ 0, 27, 15 ]
+                  , output = Array.fromList [ 405 ]
                   }
-                , { input = Array.fromList [ 3, 33, 0 ]
-                  , output = Array.fromList [ 3, 33, 99 ]
+                , { input = Array.fromList [ 0, 3, 33 ]
+                  , output = Array.fromList [ 99 ]
                   }
                 ]
           }

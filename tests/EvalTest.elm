@@ -43,8 +43,8 @@ passAllExpect n str =
         Ok program ->
             Zadaci.passAll n program |> expectTrue
 
-        _ ->
-            Expect.fail "Couldn't parse"
+        Err err ->
+            Expect.fail <| "Couldn't parse" ++ Debug.toString err
 
 
 expectTrue : Bool -> Expect.Expectation
@@ -77,10 +77,39 @@ passTest =
             )
         , test "zadatak 2"
             (\_ ->
-                passAllExpect 1 "sub 1 1 2\nsub 2 3 4\nadd 1 2"
+                passAllExpect 1 """
+                sub 1 1 2
+                sub 2 3 4 
+                add 1 2"""
             )
         , test "zadatak 3"
             (\_ ->
-                passAllExpect 2 "sub 1 1 2\nsub 2 3 5\nadd 1 4\nadd 3 2\nsub 3 6 7\nadd 2 5"
+                passAllExpect 2 """
+                sub 1 1 2 
+                sub 2 3 5 
+                add 1 4 
+                add 3 2 
+                sub 3 6 7 
+                add 2 5"""
+            )
+        , test "zadatak 4"
+            (\_ ->
+                passAllExpect 3 """
+                sub 1 1 2
+                sub 2 3 4
+                add 1 2
+                sub 3 5 6
+                add 1 4"""
+            )
+        , test "zadatak 5"
+            (\_ ->
+                passAllExpect 4 """
+                sub 1 1 2
+                sub 2 3 8
+                sub 3 4 6
+                add 1 5
+                add 4 3
+                sub 4 7 2
+                add 3 6"""
             )
         ]
