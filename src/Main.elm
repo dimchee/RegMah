@@ -1,9 +1,7 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Array exposing (Array)
 import Browser
-import Browser.Dom
-import Editor
 import Element
 import Element.Background
 import Element.Border
@@ -11,24 +9,30 @@ import Element.Font
 import Eval
 import Html.Attributes as HA
 import Lang
+import MiniRte as Editor
+import MiniRte.Types as RteTypes exposing (Msg(..))
 import Parser exposing (Problem(..))
-import Task
 
 
+port fromBrowserClipboard : (String -> msg) -> Sub msg
 
--- import Html.Events as HE
+
+port toBrowserClipboard : String -> Cmd msg
 
 
-main : Program () Editor.Model Editor.Msg
+main : Program () Editor.Rte Msg
 main =
     Browser.document
         { init =
-            \() ->
-                ( Editor.init
-                , Browser.Dom.focus "editor"
-                    |> Task.attempt (always Editor.NoOp)
-                )
-        , update = Editor.update
+            \() -> ( Editor.init "editor", Cmd.none )
+        , update =
+            \msg model ->
+                case msg of
+                    RteTypes.ToBrowserClipboard txt ->
+                        ( model, toBrowserClipboard txt )
+
+                    rteMsg ->
+                        Editor.update rteMsg model
         , view =
             \model ->
                 { title = "Register Machine"
@@ -37,7 +41,12 @@ main =
                         |> Element.layout [ Element.padding 100 ]
                         |> List.singleton
                 }
-        , subscriptions = \_ -> Sub.none
+        , subscriptions =
+            \model ->
+                Sub.batch
+                    [ Editor.subscriptions model
+                    , fromBrowserClipboard FromBrowserClipboard
+                    ]
         }
 
 
@@ -80,16 +89,25 @@ unwrapResult res =
             x
 
 
-view : Editor.Model -> Element.Element Editor.Msg
+view : Editor.Rte -> Element.Element Msg
 view model =
     let
         res =
-            Editor.getText model
+            Editor.content model
+                |> Editor.contentToText
+                |> String.trim
                 |> Lang.parse
                 |> Result.map Eval.eval
     in
-    Element.column []
-        [ Editor.view model
+    Element.column [ Element.width Element.fill ]
+        [ Element.row
+            [ Element.Border.solid
+            , Element.Border.width 1
+            , Element.width Element.fill
+            ]
+            [ Element.html <|
+                Editor.textarea model []
+            ]
         , Element.row [ Element.centerX ]
             [ res
                 |> Result.withDefault Array.empty
@@ -101,7 +119,7 @@ view model =
         ]
 
 
-viewState : Array Int -> Element.Element Editor.Msg
+viewState : Array Int -> Element.Element msg
 viewState state =
     Element.column
         [ Element.pointer
@@ -134,7 +152,7 @@ viewState state =
         ]
 
 
-viewParsingErrors : List Parser.DeadEnd -> Element.Element Editor.Msg
+viewParsingErrors : List Parser.DeadEnd -> Element.Element msg
 viewParsingErrors errors =
     let
         viewParsingError { col, problem, row } =
