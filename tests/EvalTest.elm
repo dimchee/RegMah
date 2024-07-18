@@ -27,11 +27,21 @@ passExpect { input, output } program =
     Eval.eval (Debug.log "input: " input) program |> Debug.log "eval: " |> Array.toList |> Expect.equalLists (Array.toList output)
 
 
-passAllExpect : Int -> String -> Expect.Expectation
-passAllExpect n str =
+passAllExpectB : Int -> String -> Expect.Expectation
+passAllExpectB n str =
     case ( Array.get n Zadaci.zadaci, Lang.parse str ) of
         ( Just { testCases }, Ok program ) ->
             Expect.all (testCases |> List.map passExpect) program
+
+        _ ->
+            Expect.fail "Couldn't parse"
+
+
+passAllExpect : Int -> String -> Expect.Expectation
+passAllExpect n str =
+    case Lang.parse str of
+        Ok program ->
+            Zadaci.passAll n program |> expectTrue
 
         _ ->
             Expect.fail "Couldn't parse"
@@ -68,5 +78,9 @@ passTest =
         , test "zadatak 2"
             (\_ ->
                 passAllExpect 1 "sub 1 1 2\nsub 2 3 4\nadd 1 2"
+            )
+        , test "zadatak 3"
+            (\_ ->
+                passAllExpect 2 "sub 1 1 2\nsub 2 3 5\nadd 1 4\nadd 3 2\nsub 3 6 7\nadd 2 5"
             )
         ]

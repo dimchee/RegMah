@@ -305,13 +305,16 @@ view model =
         viewAssigment ( var, val ) =
             String.fromInt var ++ " = " ++ String.fromInt val |> Element.text
 
+        intOr0 =
+            Parser.oneOf [ int, Parser.map (\_ -> 0) Parser.end ]
+
         viewAssigmentChangable ( var, val ) =
             Element.row []
                 [ String.fromInt var ++ " = " |> Element.text
                 , Element.Input.text [ Element.Events.onFocus Freeze ]
                     { onChange =
                         \s ->
-                            case Parser.run int s of
+                            case Parser.run intOr0 s of
                                 Ok newVal ->
                                     ChangeRegister var newVal
 
