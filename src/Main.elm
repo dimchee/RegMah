@@ -10,7 +10,6 @@ import Element.Events
 import Element.Font
 import Element.Input
 import Eval
-import Html
 import Html.Attributes
 import Lang
 import MiniRte as Rte
@@ -41,6 +40,7 @@ type Msg
     | ChangePage Page
     | TestProgram
     | EvalProgram
+    | Alert (Maybe (Dialog.Config Msg))
     | NoOp
 
 
@@ -51,9 +51,32 @@ type alias Model =
     , errors : Maybe (List Parser.DeadEnd)
     , result : Maybe Eval.Registers
     , page : Page
+    , dialog : Maybe (Dialog.Config Msg)
     , solved : Set.Set Int
-    , testResultsDialog : Maybe Int
     }
+
+
+alert : String -> Element.Color -> Maybe (Dialog.Config Msg)
+alert txt color =
+    Just
+        { closeMessage = Just <| Alert Nothing
+        , maskAttributes = []
+        , containerAttributes =
+            [ Element.padding 100
+            , Element.centerX
+            , Element.centerY
+            ]
+        , headerAttributes =
+            [ Element.Background.color <| color
+            , Element.padding 10
+            , Element.spacing 10
+            ]
+        , bodyAttributes = []
+        , footerAttributes = []
+        , header = Just (Element.text txt)
+        , body = Nothing
+        , footer = Nothing
+        }
 
 
 main : Program () Model Msg
@@ -68,7 +91,7 @@ main =
                   , errors = Nothing
                   , solved = Set.empty
                   , result = Nothing
-                  , testResultsDialog = Nothing
+                  , dialog = Nothing
                   }
                 , Cmd.none
                 )
@@ -77,21 +100,11 @@ main =
             \model ->
                 { title = "Register Machine"
                 , body =
-                    -- [ Dialog.view
-                    --     (if Nothing /= model.testResultsDialog then
-                    --         Just
-                    --             { closeMessage = Just NoOp
-                    --             , containerClass = Just "your-container-class"
-                    --             , header = Just (Html.text "Alert!")
-                    --             , body = Just (Html.p [] [ Html.text "Let me tell you something important..." ])
-                    --             , footer = Nothing
-                    --             }
-                    --
-                    --      else
-                    --         Nothing
-                    --     )
                     [ view model
-                        |> Element.layout [ Element.padding 60 ]
+                        |> Element.layout
+                            [ Element.padding 60
+                            , Element.inFront (Dialog.view model.dialog)
+                            ]
                     ]
                 }
         , subscriptions =
@@ -146,14 +159,22 @@ update msg model =
         ChangePage page ->
             ( { model | page = page }, Cmd.none )
 
+        Alert config ->
+            ( { model | dialog = config }, Cmd.none )
+
         TestProgram ->
             ( case ( model.page, model.program ) of
                 ( Zadatak n, Just program ) ->
                     if Zadaci.passAll n program then
-                        { model | solved = Set.insert n model.solved }
+                        { model
+                            | solved = Set.insert n model.solved
+                            , dialog = alert "🎉 Success! 🏅" <| Element.rgb 0.0 0.8 0.1
+                        }
 
                     else
-                        { model | testResultsDialog = Just 1 }
+                        { model
+                            | dialog = alert "❌ Wrong Answer! ⁉️" <| Element.rgb 0.8 0.0 0.1
+                        }
 
                 _ ->
                     model
