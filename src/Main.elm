@@ -2,6 +2,7 @@ port module Main exposing (..)
 
 import Array
 import Browser
+import Dialog
 import Element
 import Element.Background
 import Element.Border
@@ -9,6 +10,7 @@ import Element.Events
 import Element.Font
 import Element.Input
 import Eval
+import Html
 import Html.Attributes
 import Lang
 import MiniRte as Rte
@@ -50,6 +52,7 @@ type alias Model =
     , result : Maybe Eval.Registers
     , page : Page
     , solved : Set.Set Int
+    , testResultsDialog : Maybe Int
     }
 
 
@@ -65,6 +68,7 @@ main =
                   , errors = Nothing
                   , solved = Set.empty
                   , result = Nothing
+                  , testResultsDialog = Nothing
                   }
                 , Cmd.none
                 )
@@ -73,9 +77,22 @@ main =
             \model ->
                 { title = "Register Machine"
                 , body =
-                    view model
+                    -- [ Dialog.view
+                    --     (if Nothing /= model.testResultsDialog then
+                    --         Just
+                    --             { closeMessage = Just NoOp
+                    --             , containerClass = Just "your-container-class"
+                    --             , header = Just (Html.text "Alert!")
+                    --             , body = Just (Html.p [] [ Html.text "Let me tell you something important..." ])
+                    --             , footer = Nothing
+                    --             }
+                    --
+                    --      else
+                    --         Nothing
+                    --     )
+                    [ view model
                         |> Element.layout [ Element.padding 60 ]
-                        |> List.singleton
+                    ]
                 }
         , subscriptions =
             \model ->
@@ -130,19 +147,16 @@ update msg model =
             ( { model | page = page }, Cmd.none )
 
         TestProgram ->
-            ( { model
-                | solved =
-                    case ( model.page, model.program ) of
-                        ( Zadatak n, Just program ) ->
-                            if Zadaci.passAll n program then
-                                Set.insert n model.solved
+            ( case ( model.page, model.program ) of
+                ( Zadatak n, Just program ) ->
+                    if Zadaci.passAll n program then
+                        { model | solved = Set.insert n model.solved }
 
-                            else
-                                model.solved
+                    else
+                        { model | testResultsDialog = Just 1 }
 
-                        _ ->
-                            model.solved
-              }
+                _ ->
+                    model
             , Cmd.none
             )
 

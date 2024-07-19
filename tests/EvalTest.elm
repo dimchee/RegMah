@@ -24,7 +24,7 @@ import Zadaci
 
 passExpect : Zadaci.TestCase -> Lang.Program -> Expect.Expectation
 passExpect { input, output } program =
-    Eval.eval (Debug.log "input: " input) program |> Debug.log "eval: " |> Array.toList |> Expect.equalLists (Array.toList output)
+    Eval.eval (Debug.log "input: " <| Array.map Just input) program |> Debug.log "eval: " |> Array.toList |> Expect.equalLists (Array.toList output)
 
 
 passAllExpectB : Int -> String -> Expect.Expectation
