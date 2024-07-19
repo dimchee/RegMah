@@ -116,6 +116,15 @@ main =
         }
 
 
+chunk : String -> List String
+chunk str =
+    if String.length str > 20 then
+        String.left 20 str :: (str |> String.right (String.length str - 20) |> chunk)
+
+    else
+        [ str ]
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -124,13 +133,13 @@ update msg model =
 
         Editor rteMsg ->
             let
-                ( m, cmd ) =
+                ( rte, cmd ) =
                     Rte.update rteMsg model.rte
 
-                ( m2, _ ) =
-                    update EvalProgram { model | rte = m }
+                ( m, _ ) =
+                    update EvalProgram { model | rte = rte }
             in
-            ( m2, Cmd.map Editor cmd )
+            ( m, Cmd.map Editor cmd )
 
         ChangeInitialRegs n ->
             ( update EvalProgram
@@ -184,7 +193,7 @@ update msg model =
         EvalProgram ->
             let
                 res =
-                    Rte.content model.rte |> Rte.contentToText |> String.dropRight 1 |> Lang.parse
+                    model.rte |> Rte.textContent |> String.dropRight 1 |> Lang.parse
             in
             ( { model
                 | program = Result.toMaybe res
@@ -223,26 +232,6 @@ problemToString problem =
             "Unknown error: " ++ Debug.toString err
 
 
-errorOr : err -> Result err b -> err
-errorOr err res =
-    case res of
-        Result.Ok _ ->
-            err
-
-        Result.Err x ->
-            x
-
-
-unwrapResult : Result a a -> a
-unwrapResult res =
-    case res of
-        Result.Ok x ->
-            x
-
-        Result.Err x ->
-            x
-
-
 view : Model -> Element.Element Msg
 view model =
     let
@@ -273,7 +262,7 @@ view model =
                 }
 
         viewTextArea =
-            Rte.textarea model.rte [ Html.Attributes.style "text-wrap" "no-wrap" ]
+            Rte.textarea model.rte [ Html.Attributes.style "flex-wrap" "nowrap" ]
                 |> Element.html
                 |> Element.map Editor
                 |> Element.el
@@ -384,10 +373,11 @@ view model =
             , Element.column [ Element.spacing 10 ] <|
                 List.map viewZadNum <|
                     Array.toIndexedList Zadaci.zadaci
-            , Element.Input.button buttonStyle
-                { onPress = Just <| ChangePage Summary
-                , label = Element.text "Σ"
-                }
+
+            -- , Element.Input.button buttonStyle
+            --     { onPress = Just <| ChangePage Summary
+            --     , label = Element.text "Σ"
+            --     }
             ]
         , Element.el [ Element.width Element.fill, Element.alignTop ] <|
             Element.column

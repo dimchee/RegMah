@@ -13,9 +13,9 @@
 + menjaj početne vrednosti registara
 + ograničiti broj registra
 + otvaranje zadataka
++ last successfull state green
 - sačuvavanje
 - komentari 
-- last successfull state green
 - srediti font, veličine elemenata (not hardcoded)
 - strelica od trenutne linije ka sledećoj komandi
 
