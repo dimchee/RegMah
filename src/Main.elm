@@ -173,7 +173,7 @@ update msg model =
 
                     else
                         { model
-                            | dialog = alert "❌ Wrong Answer! ⁉️" <| Element.rgb 0.8 0.0 0.1
+                            | dialog = alert "❌ Wrong Answer! ⁉️" <| Element.rgba 0.3 0.0 0.1 0.5
                         }
 
                 _ ->
