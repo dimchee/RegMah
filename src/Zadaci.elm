@@ -180,60 +180,60 @@ zadaci =
                   }
                 ]
           }
-        , { text = "oduzeti broj iz registra 2 od broja u registru 1 i rezultat upisati u registar 3 ako je veći od 0, u suprotnom upisati njegovu apsolutnu vrednost u registar 4"
+        , { text = "oduzeti broj iz registra 3 od broja u registru 2 i apsolutnu vrednost razlike upisati u registar 1"
           , testCases =
-                [ { input = Array.fromList [ 12, 15, 0, 0 ]
-                  , output = Array.fromList [ 12, 15, 0, 3 ]
+                [ { input = Array.fromList [ 0, 12, 15 ]
+                  , output = Array.fromList [ 3 ]
                   }
-                , { input = Array.fromList [ 54, 23, 0, 0 ]
-                  , output = Array.fromList [ 54, 23, 31, 0 ]
+                , { input = Array.fromList [ 0, 54, 23 ]
+                  , output = Array.fromList [ 31 ]
                   }
-                , { input = Array.fromList [ 163, 312, 0, 0 ]
-                  , output = Array.fromList [ 163, 312, 0, 149 ]
+                , { input = Array.fromList [ 0, 163, 312 ]
+                  , output = Array.fromList [ 149 ]
                   }
-                , { input = Array.fromList [ 427, 315, 0, 0 ]
-                  , output = Array.fromList [ 427, 315, 112, 0 ]
+                , { input = Array.fromList [ 0, 427, 315 ]
+                  , output = Array.fromList [ 112 ]
                   }
-                , { input = Array.fromList [ 333, 642, 0, 0 ]
-                  , output = Array.fromList [ 333, 642, 0, 309 ]
+                , { input = Array.fromList [ 0, 333, 642 ]
+                  , output = Array.fromList [ 309 ]
                   }
                 ]
           }
-        , { text = "podeliti broj iz registra 2 brojem iz registra 1, i količnik upisati u registar 3"
+        , { text = "podeliti broj iz registra 3 brojem iz registra 2, i količnik upisati u registar 1"
           , testCases =
-                [ { input = Array.fromList [ 12, 15, 0 ]
-                  , output = Array.fromList [ 12, 15, 0 ]
+                [ { input = Array.fromList [ 0, 12, 15 ]
+                  , output = Array.fromList [ 0 ]
                   }
-                , { input = Array.fromList [ 54, 23, 0 ]
-                  , output = Array.fromList [ 54, 23, 2 ]
+                , { input = Array.fromList [ 0, 54, 23 ]
+                  , output = Array.fromList [ 2 ]
                   }
-                , { input = Array.fromList [ 163, 3, 0 ]
-                  , output = Array.fromList [ 163, 3, 54 ]
+                , { input = Array.fromList [ 0, 163, 3 ]
+                  , output = Array.fromList [ 54 ]
                   }
-                , { input = Array.fromList [ 427, 315, 0 ]
-                  , output = Array.fromList [ 427, 315, 1 ]
+                , { input = Array.fromList [ 0, 427, 315 ]
+                  , output = Array.fromList [ 1 ]
                   }
-                , { input = Array.fromList [ 19, 4, 0 ]
-                  , output = Array.fromList [ 19, 4, 4 ]
+                , { input = Array.fromList [ 0, 19, 4 ]
+                  , output = Array.fromList [ 4 ]
                   }
                 ]
           }
-        , { text = "podeliti broj iz registra 2 brojem iz registra 1, količnik upisati u registar 3, a ostatak u registar 4"
+        , { text = "podeliti broj iz registra 4 brojem iz registra 3, količnik upisati u registar 1, a ostatak u registar 2"
           , testCases =
-                [ { input = Array.fromList [ 12, 15, 0, 0 ]
-                  , output = Array.fromList [ 12, 15, 0, 12 ]
+                [ { input = Array.fromList [ 0, 0, 12, 15 ]
+                  , output = Array.fromList [ 0, 12 ]
                   }
-                , { input = Array.fromList [ 54, 23, 0, 0 ]
-                  , output = Array.fromList [ 54, 23, 2, 8 ]
+                , { input = Array.fromList [ 0, 0, 54, 23 ]
+                  , output = Array.fromList [ 2, 8 ]
                   }
-                , { input = Array.fromList [ 163, 3, 0, 0 ]
-                  , output = Array.fromList [ 163, 3, 54, 1 ]
+                , { input = Array.fromList [ 0, 0, 163, 3 ]
+                  , output = Array.fromList [ 54, 1 ]
                   }
-                , { input = Array.fromList [ 427, 315, 0, 0 ]
-                  , output = Array.fromList [ 427, 315, 1, 112 ]
+                , { input = Array.fromList [ 0, 0, 427, 315 ]
+                  , output = Array.fromList [ 1, 112 ]
                   }
-                , { input = Array.fromList [ 19, 4, 0, 0 ]
-                  , output = Array.fromList [ 19, 4, 4, 3 ]
+                , { input = Array.fromList [ 0, 0, 19, 4 ]
+                  , output = Array.fromList [ 4, 3 ]
                   }
                 ]
           }
@@ -275,7 +275,7 @@ zadaci =
                   }
                 ]
           }
-        , { text = "ispitati da li je broj u registru 2 prost, i ako jeste upisati 1 u registar 1, u suprotnom upisati 0 u registar 1"
+        , { text = "ispitati da li je broj u registru 2 prost, i ako jeste upisati 1 u registar 1, u suprotnom upisati 0"
           , testCases =
                 [ { input = Array.fromList [ 0, 5 ]
                   , output = Array.fromList [ 1 ]
@@ -309,7 +309,7 @@ zadaci =
                   }
                 ]
           }
-        , { text = "ispitati da li brojevi u registrima 2, 3 i 4 čine pitagorinu trojku, i ako čine upisati 1 u registar 1, u suprotnom upisati 0"
+        , { text = "ispitati da li brojevi u registrima 2, 3 i 4 čine pitagorinu trojku, i ako čine u registar 1 upisati 1, u suprotnom 0"
           , testCases =
                 [ { input = Array.fromList [ 0, 3, 4, 5 ]
                   , output = Array.fromList [ 1 ]
