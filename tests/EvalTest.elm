@@ -112,4 +112,17 @@ passTest =
                 sub 4 7 2
                 add 3 6"""
             )
+        , test "zadatak 6"
+            (\_ ->
+                passAllExpectB 5 """
+                sub 1 2 3
+                add 3 1
+                sub 2 4 10
+                sub 3 3 5
+                sub 3 10 6
+                add 2 7
+                sub 2 8 10
+                add 4 7
+                """
+            )
         ]

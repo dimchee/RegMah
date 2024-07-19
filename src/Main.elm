@@ -152,10 +152,12 @@ update msg model =
             )
 
         ChangeRegister i x ->
-            ( { model
-                | initialRegs =
-                    Eval.setRegister i x model.initialRegs
-              }
+            ( update EvalProgram
+                { model
+                    | initialRegs =
+                        Eval.setRegister i x model.initialRegs
+                }
+                |> Tuple.first
             , Cmd.none
             )
 
