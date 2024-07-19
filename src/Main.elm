@@ -145,7 +145,7 @@ update msg model =
             ( update EvalProgram
                 { model
                     | initialRegs =
-                        Eval.extendRegisters model.initialRegs n
+                        Eval.extendRegisters model.initialRegs [ n ]
                 }
                 |> Tuple.first
             , Cmd.none
@@ -332,8 +332,11 @@ view model =
                     |> Element.column []
                 ]
 
-        viewAssigment ( var, val ) =
+        viewAssigment2 var val =
             String.fromInt var ++ " = " ++ String.fromInt val |> Element.text
+
+        viewAssigment ( var, mval ) =
+            Maybe.map (viewAssigment2 var) mval
 
         intOr0 =
             Parser.oneOf [ Parser.map Just int, Parser.map (\_ -> Nothing) Parser.end ]
@@ -362,7 +365,7 @@ view model =
                 , model.result
                     |> Maybe.withDefault Array.empty
                     |> Eval.toIndexedRegisterList
-                    |> List.map viewAssigment
+                    |> List.filterMap viewAssigment
                     |> Element.column []
                 ]
     in

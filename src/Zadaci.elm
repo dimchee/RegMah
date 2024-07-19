@@ -6,8 +6,8 @@ import Lang
 
 
 type alias TestCase =
-    { input : Eval.Registers
-    , output : Eval.Registers
+    { input : Array.Array Int
+    , output : Array.Array Int
     }
 
 
@@ -24,7 +24,7 @@ isti regs1 regs2 =
 
 pass : Lang.Program -> TestCase -> Bool
 pass program { input, output } =
-    Eval.eval (Array.map Just input) program |> isti output
+    Eval.eval (Array.map Just input) program |> isti (Array.map Just output)
 
 
 passAll : Int -> Lang.Program -> Bool

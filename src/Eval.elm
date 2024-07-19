@@ -15,7 +15,7 @@ type Progress
 
 
 type alias Registers =
-    Array Int
+    Array (Maybe Int)
 
 
 setRegister : Int -> a -> Array a -> Array a
@@ -37,7 +37,7 @@ evalLine : Line -> Registers -> Program -> Progress
 evalLine pc regs program =
     let
         modify reg f =
-            setRegister reg (getRegister reg regs |> Maybe.withDefault 0 |> f) regs
+            setRegister reg (getRegister reg regs |> Maybe.andThen (Maybe.map f)) regs
     in
     case Array.get (pc - 1) program of
         Just (Add { register, next }) ->
@@ -48,7 +48,10 @@ evalLine pc regs program =
                 Nothing ->
                     Running regs next_else
 
-                Just 0 ->
+                Just (Just 0) ->
+                    Running regs next_else
+
+                Just Nothing ->
                     Running regs next_else
 
                 _ ->
@@ -58,10 +61,17 @@ evalLine pc regs program =
             Finished regs
 
 
-extendRegisters : Array (Maybe Int) -> Int -> Array (Maybe Int)
-extendRegisters regs n =
+extendRegisters : Array (Maybe Int) -> List Int -> Array (Maybe Int)
+extendRegisters regs inds =
+    let
+        n =
+            List.maximum inds |> Maybe.withDefault 0
+
+        noths _ =
+            Array.repeat (n - Array.length regs) Nothing |> Array.append regs
+    in
     if n > Array.length regs then
-        Array.append regs <| Array.repeat (n - Array.length regs) Nothing
+        List.foldl (\i arr -> Array.set i (Just 0) arr) (noths ()) inds
 
     else
         Array.slice 0 n regs
@@ -83,19 +93,16 @@ eval initRegs program =
                 Finished regs ->
                     regs
 
-        maxReg =
+        inds =
             program
                 |> Array.toList
                 |> List.map Lang.getRegister
-                |> List.maximum
-                |> Maybe.withDefault 0
     in
     extendRegisters initRegs
-        (if maxReg < 1000 then
-            maxReg
+        (if Maybe.withDefault 0 (List.maximum inds) < 1000 then
+            inds
 
          else
-            0
+            []
         )
-        |> Array.map (Maybe.withDefault 0)
         |> go 1 1
